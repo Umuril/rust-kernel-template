@@ -1,6 +1,6 @@
 use core::arch::naked_asm;
 
-#[unsafe(link_section = ".multiboot")]
+#[unsafe(link_section = ".boot2")]
 #[unsafe(no_mangle)]
 #[unsafe(naked)]
 pub unsafe fn multiboot() -> ! {
@@ -13,13 +13,23 @@ pub unsafe fn multiboot() -> ! {
     );
 }
 
-#[unsafe(link_section = ".boot2")]
 #[unsafe(no_mangle)]
 #[unsafe(naked)]
 pub unsafe fn kstart() -> ! {
     naked_asm!(
         "
-    JMP kmain
+        JMP kmain
+    "
+    );
+}
+
+#[unsafe(no_mangle)]
+#[unsafe(naked)]
+pub unsafe fn halt() -> ! {
+    naked_asm!(
+        "
+        HLT
+        JMP halt
     "
     );
 }

@@ -4,22 +4,29 @@
 
 mod arch;
 
-use core::{arch::global_asm, panic::PanicInfo};
+use core::panic::PanicInfo;
+
+use arch::x86_64::halt;
 
 #[panic_handler]
-fn panic_handler(_info: &PanicInfo) -> ! {
-    loop {}
+unsafe fn panic_handler(_info: &PanicInfo) -> ! {
+    unsafe { halt() };
 }
-
-global_asm!(
-    ".section .multiboot",
-    ".align 4",
-    ".long 0x1BADB002",          // magic number
-    ".long 0x0",                 // flags
-    ".long -(0x1BADB002 + 0x0)", // checksum
-);
 
 #[unsafe(no_mangle)]
 pub fn kmain() -> ! {
-    loop {}
+    const VIDEO_MEMORY_WIDTH: isize = 80;
+    const _VIDEO_MEMORY_HEIGHT: isize = 25;
+    const ROW: isize = 12;
+
+    let ptr = (0xb8000) as *mut u16;
+
+    for (i, &c) in "Hello, world!".as_bytes().iter().enumerate() {
+        unsafe {
+            let dst = ptr.offset(ROW * VIDEO_MEMORY_WIDTH).offset((80 - 13) / 2 ).add(i);
+            core::ptr::write_volatile(dst, 0x0F00 + c as u16);
+        }
+    }
+
+    unsafe { halt() };
 }

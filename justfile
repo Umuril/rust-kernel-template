@@ -22,7 +22,7 @@ qemu gdb="false" nographic="false": build
     cp target/$ARCH/{{TARGET_DIR}}/rust-kernel-template isodir/boot/kernel.bin
     echo 'set timeout=0\nset default=0\n\nmenuentry "My Kernel" {\nmultiboot /boot/kernel.bin\nboot\n}' > isodir/boot/grub/grub.cfg
     grub-mkrescue -o mykernel.iso isodir
-    qemu-system-x86_64 {{ if gdb == "true" { "-s -S" } else { "" } }} -cdrom mykernel.iso {{ if nographic == "true" { "-nographic" } else { "" } }}
+    qemu-system-x86_64 {{ if gdb == "true" { "-s -S" } else { "" } }} -serial stdio -cdrom mykernel.iso {{ if nographic == "true" { "-nographic" } else { "" } }}
 
 gdb:
     @until [ -e target/$ARCH/{{TARGET_DIR}}/rust-kernel-template ]; do sleep 1; done

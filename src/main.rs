@@ -13,20 +13,15 @@ unsafe fn panic_handler(_info: &PanicInfo) -> ! {
     unsafe { halt() };
 }
 
-#[unsafe(no_mangle)]
-pub fn kmain() -> ! {
-    const VIDEO_MEMORY_WIDTH: isize = 80;
-    const _VIDEO_MEMORY_HEIGHT: isize = 25;
-    const ROW: isize = 12;
+pub struct Context<T: embedded_io::Write> {
+    pub primary_log: T,
+}
 
-    let ptr = (0xb8000) as *mut u16;
+pub fn kmain<T: embedded_io::Write>(mut ctx: Context<T>) -> ! {
 
-    for (i, &c) in "Hello, world!".as_bytes().iter().enumerate() {
-        unsafe {
-            let dst = ptr.offset(ROW * VIDEO_MEMORY_WIDTH).offset((80 - 13) / 2 ).add(i);
-            core::ptr::write_volatile(dst, 0x0F00 + c as u16);
-        }
-    }
+    if ctx.primary_log.write_all(b"Hello, World!\n").is_err() {
+        unsafe { halt() };
+    };
 
     unsafe { halt() };
 }

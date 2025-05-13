@@ -17,7 +17,6 @@ pub struct Context<T: embedded_io::Write> {
 }
 
 pub fn kmain<T: embedded_io::Write>(mut ctx: Context<T>) -> ! {
-
     if ctx.primary_log.write_all(b"Hello, World!\n").is_err() {
         unsafe { halt() };
     };

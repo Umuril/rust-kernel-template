@@ -12,6 +12,7 @@ default:
 
 build:
     cargo clean # Force rebuild to get changes to linker scripts.
+    cargo fmt
     cargo rustc --profile=$PROFILE --target=targets/$ARCH.json -- -Clink-arg=-T -Clink-arg=linkers/$ARCH.ld -Clink-arg=-z -Clink-arg=nognustack
     cargo clippy --profile=$PROFILE --target=targets/$ARCH.json
 

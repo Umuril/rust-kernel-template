@@ -7,4 +7,3 @@ pub use x86_64::*;
 pub mod arm;
 #[cfg(target_arch = "arm")]
 pub use arm::*;
-

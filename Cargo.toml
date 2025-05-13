@@ -16,3 +16,6 @@ embedded-io = "0.6.1"
 
 [target.'cfg(target_arch = "x86_64")'.dependencies]
 uart_16550 = "0.3.2"
+
+[target.'cfg(target_arch = "arm")'.dependencies]
+arm-pl011-uart = "0.3.1"

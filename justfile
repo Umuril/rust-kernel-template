@@ -22,6 +22,7 @@ readelf: build
 qemu gdb="false" nographic="false": build
     @if [[ $ARCH == "x86_64" ]]; then just qemu-x86_64 {{gdb}} {{nographic}}; fi
     @if [[ $ARCH == "arm" ]]; then just qemu-arm {{gdb}} {{nographic}}; fi
+    @if [[ $ARCH == "riscv64" ]]; then just qemu-riscv64 {{gdb}} {{nographic}}; fi
 
 qemu-x86_64 gdb="false" nographic="false":
     rm -fr ./target/isodir
@@ -33,6 +34,9 @@ qemu-x86_64 gdb="false" nographic="false":
 
 qemu-arm gdb="false" nographic="false":
     qemu-system-arm -M virt -cpu cortex-a15 {{ if gdb == "true" { "-s -S" } else { "" } }} -kernel target/$ARCH/{{TARGET_DIR}}/rust-kernel-template -serial stdio {{ if nographic == "true" { "-nographic" } else { "" } }}
+
+qemu-riscv64 gdb="false" nographic="false":
+    qemu-system-riscv64 -M virt {{ if gdb == "true" { "-s -S" } else { "" } }} -kernel target/$ARCH/{{TARGET_DIR}}/rust-kernel-template -serial stdio {{ if nographic == "true" { "-nographic" } else { "" } }}
 
 gdb:
     @until [ -e target/$ARCH/{{TARGET_DIR}}/rust-kernel-template ]; do sleep 1; done

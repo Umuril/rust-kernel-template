@@ -1,7 +1,7 @@
 use crate::{Context, kmain};
 use core::arch::naked_asm;
-use embedded_io::Write;
 mod uart;
+use core::fmt::Write;
 
 #[unsafe(link_section = ".boot2")]
 #[unsafe(no_mangle)]
@@ -19,10 +19,9 @@ pub unsafe fn multiboot() -> ! {
 pub unsafe fn kstart() -> ! {
     let mut uart = uart::Uart::new();
 
-    if uart.write_all(b"Bootstrapping kernel...\n").is_err() {
+    if uart.write_str("Bootstrapping kernel...\n").is_err() {
         unsafe { halt() };
     }
-    let _ = uart.flush();
 
     let ctx = Context { primary_log: uart };
 

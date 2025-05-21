@@ -94,7 +94,6 @@ name = "rust-kernel-template"
 version = "0.1.0"
 dependencies = [
  "arm-pl011-uart",
- "embedded-io",
  "uart_16550",
 ]
 

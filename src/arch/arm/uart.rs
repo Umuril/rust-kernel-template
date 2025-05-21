@@ -1,6 +1,5 @@
 use arm_pl011_uart;
 use core::ptr::NonNull;
-use embedded_io::{self, Write};
 
 pub(crate) struct Uart<'a> {
     imp: arm_pl011_uart::Uart<'a>,
@@ -27,24 +26,8 @@ impl<'a> Uart<'a> {
     }
 }
 
-impl<'a> embedded_io::ErrorType for Uart<'a> {
-    type Error = embedded_io::ErrorKind;
-}
-
-impl<'a> Write for Uart<'a> {
-    fn write(&mut self, buf: &[u8]) -> Result<usize, Self::Error> {
-        let mut written = 0;
-
-        for &c in buf {
-            self.imp.write_word(c);
-            written += 1;
-        }
-
-        Ok(written)
-    }
-
-    fn flush(&mut self) -> Result<(), Self::Error> {
-        let _ = self.imp.flush();
-        Ok(())
+impl<'a> core::fmt::Write for Uart<'a> {
+    fn write_str(&mut self, s: &str) -> core::fmt::Result {
+        self.imp.write_str(s)
     }
 }

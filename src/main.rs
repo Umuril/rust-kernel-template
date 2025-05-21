@@ -12,15 +12,14 @@ unsafe fn panic_handler(_info: &PanicInfo) -> ! {
     unsafe { halt() };
 }
 
-pub struct Context<T: embedded_io::Write> {
+pub struct Context<T: core::fmt::Write> {
     pub primary_log: T,
 }
 
-pub fn kmain<T: embedded_io::Write>(mut ctx: Context<T>) -> ! {
-    if ctx.primary_log.write_all(b"Hello, World!\n").is_err() {
+pub fn kmain<T: core::fmt::Write>(mut ctx: Context<T>) -> ! {
+    if ctx.primary_log.write_str("Hello, World!\n").is_err() {
         unsafe { halt() };
     };
-    let _ = ctx.primary_log.flush();
 
     unsafe { halt() };
 }

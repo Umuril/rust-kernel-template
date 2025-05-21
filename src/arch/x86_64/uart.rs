@@ -1,4 +1,3 @@
-use embedded_io;
 use uart_16550;
 
 pub(crate) struct Uart {
@@ -13,23 +12,8 @@ impl Uart {
     }
 }
 
-impl embedded_io::ErrorType for Uart {
-    type Error = embedded_io::ErrorKind;
-}
-
-impl embedded_io::Write for Uart {
-    fn write(&mut self, buf: &[u8]) -> Result<usize, Self::Error> {
-        let mut written = 0;
-
-        for &c in buf {
-            self.imp.send(c);
-            written += 1;
-        }
-
-        Ok(written)
-    }
-
-    fn flush(&mut self) -> Result<(), Self::Error> {
-        Ok(())
+impl core::fmt::Write for Uart {
+    fn write_str(&mut self, s: &str) -> core::fmt::Result {
+        self.imp.write_str(s)
     }
 }

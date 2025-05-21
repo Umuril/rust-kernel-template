@@ -1,13 +1,16 @@
-use core::arch::naked_asm;
+use core::arch::{global_asm, naked_asm};
 
 use crate::{Context, kmain};
-use embedded_io::Write;
+mod paging;
 mod uart;
+use core::fmt::Write;
 
-#[unsafe(link_section = ".boot2")]
+global_asm!(include_str!("boot2.S"));
+
+#[unsafe(link_section = ".multiboot_header")]
 #[unsafe(no_mangle)]
 #[unsafe(naked)]
-pub unsafe fn multiboot() -> ! {
+pub unsafe fn multiboot_header() -> ! {
     naked_asm!(
         "
         .long 0x1BADB002
@@ -17,11 +20,24 @@ pub unsafe fn multiboot() -> ! {
     );
 }
 
+#[unsafe(naked)]
+#[unsafe(no_mangle)]
+pub unsafe fn bootloader() {
+    naked_asm!(
+        "
+        MOV rsp, 0x200000 
+        CALL .SetupPaging
+        CALL .EnablePaging
+        CALL kstart
+    "
+    );
+}
+
 #[unsafe(no_mangle)]
 pub unsafe fn kstart() -> ! {
     let mut uart = uart::Uart::new();
 
-    if uart.write_all(b"Bootstrapping kernel...\n").is_err() {
+    if uart.write_str("Bootstrapping kernel...\n").is_err() {
         unsafe { halt() };
     }
 

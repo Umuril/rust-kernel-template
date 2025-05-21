@@ -1,4 +1,4 @@
-ENTRY(kstart)
+ENTRY(bootloader)
 
 MEMORY {
     RAM (rwx) : ORIGIN = 0x100000, LENGTH = 4M
@@ -7,8 +7,8 @@ MEMORY {
 SECTIONS {
     . = 0x100000;
 
-    .boot2 : {
-        KEEP(*(.boot2))
+    .multiboot_header : {
+        KEEP(*(.multiboot_header))
     } > RAM
 
     .text : {

@@ -1,6 +1,8 @@
 #![no_std]
 #![no_main]
 #![feature(naked_functions_rustic_abi)]
+#![feature(allocator_api)]
+#![feature(atomic_try_update)]
 
 mod arch;
 use arch::*;
